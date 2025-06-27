@@ -1,9 +1,9 @@
 const config = {
   development: {
-    apiUrl: import.meta.env.VITE_API_URL || 'https://gui-pricing-labeled-sleeve.trycloudflare.com/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'https://peripherals-programmer-jeremy-bean.trycloudflare.com/api',
   },
   production: {
-    apiUrl: import.meta.env.VITE_API_URL || 'https://gui-pricing-labeled-sleeve.trycloudflare.com/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'https://peripherals-programmer-jeremy-bean.trycloudflare.com/api',
   },
 };
 
