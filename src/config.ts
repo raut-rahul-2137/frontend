@@ -1,9 +1,9 @@
 const config = {
   development: {
-    apiUrl: import.meta.env.VITE_API_URL || 'http://64.227.175.218:8888/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'https://api.egde-fx.com/api',
   },
   production: {
-    apiUrl: import.meta.env.VITE_API_URL || 'http://64.227.175.218:8888/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'https://api.egde-fx.com/api',
   },
 };
 
