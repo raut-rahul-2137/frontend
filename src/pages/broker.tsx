@@ -21,7 +21,7 @@ const Broker: React.FC = () => {
         setLoading(false);
         return;
       }
-      const res = await fetch('http://64.227.175.218:8888/api/broker/', {
+      const res = await fetch('https://api.egde-fx.com/api/broker/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
