@@ -1,9 +1,9 @@
 const config = {
   development: {
-    apiUrl: import.meta.env.VITE_API_URL || 'https://peripherals-programmer-jeremy-bean.trycloudflare.com/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'http://64.227.175.218:8888/api',
   },
   production: {
-    apiUrl: import.meta.env.VITE_API_URL || 'https://peripherals-programmer-jeremy-bean.trycloudflare.com/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'http://64.227.175.218:8888/api',
   },
 };
 
