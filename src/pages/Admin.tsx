@@ -175,7 +175,7 @@ const Admin: React.FC = () => {
   });
 
   // Add base URL constant
-  const API_BASE_URL = 'http://127.0.0.1:8000/api';
+  const API_BASE_URL = 'http://64.227.175.218:8888/api';
 
   useEffect(() => {
     checkAdminAccess();
