@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /* ------------------------------------------------------------------
    LiveMarketDashboard (v2)
@@ -32,6 +33,8 @@ const LiveMarketDashboard: React.FC = () => {
   const tickerRef = useRef<HTMLDivElement>(null);
   const screenerRef = useRef<HTMLDivElement>(null);
   const watchlistRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
 
   /* -------------------------- resize hook ------------------------- */
   useEffect(() => {
@@ -171,7 +174,7 @@ const LiveMarketDashboard: React.FC = () => {
       <div ref={tickerRef} className="w-full h-8" />
 
       {/* ─── Main Grid ─────────────────────────────── */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
         {/* Left Sidebar (Screener) */}
         <aside className="md:w-80 bg-[#181818] border-r border-[#222] hidden md:flex flex-col overflow-hidden">
           <div className="flex items-center justify-between p-4 border-b border-[#222]">
@@ -201,6 +204,42 @@ const LiveMarketDashboard: React.FC = () => {
           <h2 className="text-lg font-semibold p-4 border-b border-[#222]">Watchlist</h2>
           <div ref={watchlistRef} className="flex-1" />
         </aside>
+
+        {/* Power Button Only (no card) */}
+        <button
+          onClick={() => navigate('/broker')}
+          style={{
+            position: 'absolute',
+            bottom: window.innerWidth < 768 ? 50 : 120,
+            right: window.innerWidth < 768 ? 35 : 110,
+            width: window.innerWidth < 768 ? 38 : 50,
+            height: window.innerWidth < 768 ? 38 : 50,
+            backgroundColor: 'red',
+            border: 'none',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            boxShadow: '0 0 10px red',
+            fontSize: window.innerWidth < 768 ? 18 : 24,
+            color: 'white',
+            transition: 'background 0.2s, box-shadow 0.2s, width 0.3s, height 0.3s, font-size 0.3s, bottom 0.3s, right 0.3s',
+            zIndex: 20,
+          }}
+          onMouseOver={e => {
+            e.currentTarget.style.backgroundColor = 'darkred';
+            e.currentTarget.style.boxShadow = '0 0 15px red';
+          }}
+          onMouseOut={e => {
+            e.currentTarget.style.backgroundColor = 'red';
+            e.currentTarget.style.boxShadow = '0 0 10px red';
+          }}
+          title="Connect Broker"
+        >
+          {/* Unicode Power Symbol */}
+          <span style={{fontSize: window.innerWidth < 768 ? 20 : 28, lineHeight: 1}}>&#x23FB;</span>
+        </button>
       </div>
 
       {/* Bottom nav (only on mobile) */}

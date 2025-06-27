@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
 
     // ✅ Add this to allow external hosts
     allowedHosts: [
-      'mba-clinics-millennium-is.trycloudflare.com',
+      'grow-subscribers-decorating-niagara.trycloudflare.com',
       'localhost',
       '127.0.0.1',
     ],

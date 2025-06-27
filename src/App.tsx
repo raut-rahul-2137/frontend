@@ -23,6 +23,7 @@ import News from "./pages/News";
 import Landing from "./pages/Landing";
 import UserPage from "./pages/User";
 import LiveMarketDashboard from "./pages/LiveMarket";
+import Broker from "./pages/broker";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,16 @@ const App = () => (
                 }
               />
           ))}
+          
+          {/* Broker page route */}
+          <Route
+            path="/broker"
+            element={
+              <AppContentLayout>
+                <Broker />
+              </AppContentLayout>
+            }
+          />
           
           {/* Landing page route for "/" */}
           <Route

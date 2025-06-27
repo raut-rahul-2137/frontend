@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api } from "@/utils/api";
+import PandL from './PandL';
+import TradeHistoryAdmin from './TradeHistoryAdmin';
 
 // Add the missing mockUsers definition
 const mockUsers = [
@@ -134,6 +136,19 @@ interface TradingConfig {
   CRYPTO: Array<{ symbol: string; value: string; enabled: boolean }>;
 }
 
+interface TradeRow {
+  id?: number;
+  entry_time: string;
+  symbol: string;
+  type: string;
+  quantity: number;
+  entry_price: number;
+  exit_time: string;
+  exit_price: number;
+  pl: number;
+  cpl: number;
+}
+
 const Admin: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("users");
@@ -145,6 +160,19 @@ const Admin: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [tradesByUser, setTradesByUser] = useState(userTrades);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userBrokers, setUserBrokers] = useState<any[]>([]);
+  const [trades, setTrades] = useState<TradeRow[]>([]);
+  const [form, setForm] = useState<TradeRow>({
+    entry_time: "",
+    symbol: "",
+    type: "",
+    quantity: 0,
+    entry_price: 0,
+    exit_time: "",
+    exit_price: 0,
+    pl: 0,
+    cpl: 0,
+  });
 
   // Add base URL constant
   const API_BASE_URL = 'http://127.0.0.1:8000/api';
@@ -179,6 +207,7 @@ const Admin: React.FC = () => {
   useEffect(() => {
     if (selectedUser) {
       fetchUserConfig(selectedUser);
+      fetchUserBrokers(selectedUser);
     }
   }, [selectedUser]);
 
@@ -212,6 +241,15 @@ const Admin: React.FC = () => {
     }
   };
 
+  const fetchUserBrokers = async (userId: number) => {
+    try {
+      const data = await api.get(`/brokers/?user_id=${userId}`);
+      setUserBrokers(data);
+    } catch (error) {
+      setUserBrokers([]);
+    }
+  };
+
   const handleStatusChange = async (franchiseId: number, newStatus: string) => {
     try {
       await api.patch(`/franchises/${franchiseId}/`, { status: newStatus });
@@ -235,6 +273,36 @@ const Admin: React.FC = () => {
     setTradesByUser(prev => ({ ...prev, [userId]: trades }));
     // In production: Make backend API call here to sync changes
   }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUser) return;
+    const payload = {
+      ...form,
+      quantity: parseFloat(form.quantity as any),
+      entry_price: parseFloat(form.entry_price as any),
+      exit_price: parseFloat(form.exit_price as any),
+      pl: parseFloat(form.pl as any),
+      cpl: parseFloat(form.cpl as any),
+    };
+    await api.post(`/trade-history/${selectedUser}/`, payload);
+    api.get(`/trade-history/${selectedUser}/`).then(setTrades);
+    setForm({
+      entry_time: "",
+      symbol: "",
+      type: "",
+      quantity: 0,
+      entry_price: 0,
+      exit_time: "",
+      exit_price: 0,
+      pl: 0,
+      cpl: 0,
+    });
+  };
 
   if (loading || !isAdmin) {
     return (
@@ -263,6 +331,7 @@ const Admin: React.FC = () => {
             <TabsTrigger value="user-dashboard" className="text-brand">User Dashboard</TabsTrigger>
             <TabsTrigger value="contacts" className="text-brand">Contacts</TabsTrigger>
             <TabsTrigger value="franchises" className="text-brand">Franchises</TabsTrigger>
+            <TabsTrigger value="trade-history" className="text-brand">Trade History</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -295,6 +364,32 @@ const Admin: React.FC = () => {
                     ))}
                   </TableBody>
                 </Table>
+                {/* Broker Data Table */}
+                {selectedUser && userBrokers.length > 0 && (
+                  <div className="mt-8">
+                    <h3 className="text-lg font-bold text-brand mb-2">Broker Connections</h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-brand">Broker Name</TableHead>
+                          <TableHead className="text-brand">MT5 Login</TableHead>
+                          <TableHead className="text-brand">MT5 Server</TableHead>
+                          <TableHead className="text-brand">Created At</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {userBrokers.map((broker) => (
+                          <TableRow key={broker.id || broker.created_at + broker.mt5_login}>
+                            <TableCell className="text-brand/80">{broker.broker_name}</TableCell>
+                            <TableCell className="text-brand/80">{broker.mt5_login}</TableCell>
+                            <TableCell className="text-brand/80">{broker.mt5_server}</TableCell>
+                            <TableCell className="text-brand/80">{new Date(broker.created_at).toLocaleString()}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -369,6 +464,37 @@ const Admin: React.FC = () => {
                     Select a user to view their trading configuration
           </div>
                 )}
+
+                {/* Broker Data Table - moved here */}
+                {selectedUser && userBrokers.length > 0 && (
+                  <div className="mt-8">
+                    <h3 className="text-lg font-bold text-brand mb-2">Broker Connections</h3>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-brand">Broker Name</TableHead>
+                          <TableHead className="text-brand">MT5 Login</TableHead>
+                          <TableHead className="text-brand">MT5 Server</TableHead>
+                          <TableHead className="text-brand">Created At</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {userBrokers.map((broker) => (
+                          <TableRow key={broker.id || broker.created_at + broker.mt5_login}>
+                            <TableCell className="text-brand/80">{broker.broker_name}</TableCell>
+                            <TableCell className="text-brand/80">{broker.mt5_login}</TableCell>
+                            <TableCell className="text-brand/80">{broker.mt5_server}</TableCell>
+                            <TableCell className="text-brand/80">{new Date(broker.created_at).toLocaleString()}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+                {/* P&L Table at the bottom */}
+                <div className="mt-12">
+                  <PandL />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -469,6 +595,17 @@ const Admin: React.FC = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="trade-history">
+            <Card className="bg-[#232323] border-brand/20">
+              <CardHeader>
+                <CardTitle className="text-brand">Trade History (Admin Only)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TradeHistoryAdmin />
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,9 +1,9 @@
 const config = {
   development: {
-    apiUrl: import.meta.env.VITE_API_URL || 'https://misc-course-launch-optional.trycloudflare.com/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   },
   production: {
-    apiUrl: import.meta.env.VITE_API_URL || 'https://misc-course-launch-optional.trycloudflare.com/api',
+    apiUrl: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api',
   },
 };
 
