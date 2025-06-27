@@ -175,7 +175,7 @@ const Admin: React.FC = () => {
   });
 
   // Add base URL constant
-  const API_BASE_URL = 'http://64.227.175.218:8888/api';
+  const API_BASE_URL = 'https://api.egde-fx.com/api';
 
   useEffect(() => {
     checkAdminAccess();
